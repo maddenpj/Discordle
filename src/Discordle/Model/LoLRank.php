@@ -2,14 +2,14 @@
 
 namespace Discordle\Model;
 
-enum LoLRank {
-    case IRON;
-    case BRONZE;
-    case SILVER;
-    case GOLD;
-    case PLATINUM;
-    case DIAMOND;
-    case MASTER;
-    case GRANDMASTER;
-    case CHALLENGER;
+enum LoLRank: int {
+    case IRON = 1;
+    case BRONZE = 2;
+    case SILVER = 3;
+    case GOLD = 4;
+    case PLATINUM = 5;
+    case DIAMOND = 6;
+    case MASTER = 7;
+    case GRANDMASTER = 8;
+    case CHALLENGER = 9;
 }
