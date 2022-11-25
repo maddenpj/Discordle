@@ -17,6 +17,7 @@ $app = AppFactory::create();
 $app->get('/', function (Request $request, Response $response, $args) {
     echo "<pre>";
 
+    
     $users = new DiscordUserService();
     var_dump($users->users[1]);
     $response->getBody()->write("</pre>");
