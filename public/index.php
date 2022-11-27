@@ -3,6 +3,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 use Discordle\Model\DiscordUser;
+use Discordle\Model\Comparison;
 use Discordle\Model\LoLRank;
 use Discordle\Model\Region;
 use Discordle\Model\Gender;
@@ -21,18 +22,19 @@ $users = new DiscordUserService();
     $correctUser = $users->users[1];
     $guessUser = $users->users[2];
 
-    print_r($users->users[1]);
-    print_r($guessUser);
+    // print_r($users->users[1]);
+    // print_r($guessUser);
 
     
     $response->getBody()->write("</pre>");
     $response->getBody()->write("<br/>Hidden answer is " . $correctUser->username);
     $response->getBody()->write("<br/>Your guess was " . $guessUser->username);
+    $response->getBody()->write("<pre>");
 
     //$rankStatement = ($correctUser->rank->value > $guessUser->rank->value) ? $correctUser->username : $guessUser->username;
-    $rankStatement = print_r($correctUser->compareTo($guessUser), true);
+    $rankStatement = print_r(new Comparison($correctUser, $guessUser));
 
-    $response->getBody()->write("<br/> the correct rank is " . $rankStatement . " than your guess");
+    $response->getBody()->write("<br/><pre>" . $rankStatement . " </pre>");
 
     return $response;
 });
