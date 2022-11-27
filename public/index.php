@@ -17,11 +17,23 @@ $app = AppFactory::create();
 $app->get('/', function (Request $request, Response $response, $args) {
     echo "<pre>";
 
+$users = new DiscordUserService();
+    $correctUser = $users->users[1];
+    $guessUser = $users->users[2];
+
+    print_r($users->users[1]);
+    print_r($guessUser);
+
     
-    $users = new DiscordUserService();
-    var_dump($users->users[1]);
     $response->getBody()->write("</pre>");
-    $response->getBody()->write("<br/>Hello");
+    $response->getBody()->write("<br/>Hidden answer is " . $correctUser->username);
+    $response->getBody()->write("<br/>Your guess was " . $guessUser->username);
+
+    //$rankStatement = ($correctUser->rank->value > $guessUser->rank->value) ? $correctUser->username : $guessUser->username;
+    $rankStatement = print_r($correctUser->compareTo($guessUser), true);
+
+    $response->getBody()->write("<br/> the correct rank is " . $rankStatement . " than your guess");
+
     return $response;
 });
 

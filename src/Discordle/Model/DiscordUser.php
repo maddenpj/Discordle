@@ -24,5 +24,8 @@ class DiscordUser {
         $this->color = $color;
     }
 
+    public function compareTo(DiscordUser $other) {
+        return $this->rank->compareTo($other->rank);
+    }
 
 }

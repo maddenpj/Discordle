@@ -2,6 +2,8 @@
 
 namespace Discordle\Model;
 
+// use Discordle\Model\RankComparison;
+
 enum LoLRank: int {
     case IRON = 1;
     case BRONZE = 2;
@@ -12,4 +14,13 @@ enum LoLRank: int {
     case MASTER = 7;
     case GRANDMASTER = 8;
     case CHALLENGER = 9;
+
+    public function compareTo(LoLRank $other): RankComparison {
+        return match (true) {
+            $this->value > $other->value => RankComparison::HIGHER,
+            $this->value == $other->value => RankComparison::SAME_RANK,
+            $this->value < $other->value => RankComparison::LOWER,
+        };
+    }
+
 }
