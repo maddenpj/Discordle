@@ -2,6 +2,7 @@
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
+use Slim\Views\PhpRenderer;
 use Discordle\Model\DiscordUser;
 use Discordle\Model\Comparison;
 use Discordle\Model\LoLRank;
@@ -18,7 +19,7 @@ $app = AppFactory::create();
 $app->get('/', function (Request $request, Response $response, $args) {
     echo "<pre>";
 
-$users = new DiscordUserService();
+    $users = new DiscordUserService();
     $correctUser = $users->users[1];
     $guessUser = $users->users[2];
 
@@ -34,9 +35,15 @@ $users = new DiscordUserService();
     //$rankStatement = ($correctUser->rank->value > $guessUser->rank->value) ? $correctUser->username : $guessUser->username;
     $rankStatement = print_r(new Comparison($correctUser, $guessUser));
 
-    $response->getBody()->write("<br/><pre>" . $rankStatement . " </pre>");
+    $response->getBody()->write(" </pre>");
 
     return $response;
+});
+
+$app->get("/view", function (Request $request, Response $response, $args) {
+    $view = new PhpRenderer('templates');
+    $view->setLayout('layout.php');
+    return $view->render($response, "hello.php", ["title" => "Discordle", "name" => "Patrick"]);
 });
 
 $app->run();
