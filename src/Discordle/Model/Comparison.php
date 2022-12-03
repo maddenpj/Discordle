@@ -6,6 +6,7 @@ class Comparison {
     private DiscordUser $correctUser;
     private DiscordUser $guessUser;
 
+    public string $guessedName;
     public NumberComparison $rank;
     public NumberComparison $subbedMonths;
     public bool $region;
@@ -17,6 +18,7 @@ class Comparison {
         $this->correctUser = $correct;
         $this->guessUser = $guess;
 
+        $this->guessedName = $guess->username;
         $this->rank = NumberComparison::make($correct->rank->value, $guess->rank->value);
         $this->subbedMonths = NumberComparison::make($correct->subbedMonths, $guess->subbedMonths);
         $this->region = $correct->region === $guess->region;

@@ -41,9 +41,15 @@ $app->get('/', function (Request $request, Response $response, $args) {
 });
 
 $app->get("/view", function (Request $request, Response $response, $args) {
+    $users = new DiscordUserService();
+    $correctUser = $users->users[1];
+    $guessUser = $users->users[2];
+    $comparison = new Comparison($correctUser, $guessUser);
+
+
     $view = new PhpRenderer('templates');
     $view->setLayout('layout.php');
-    return $view->render($response, "hello.php", ["title" => "Discordle", "name" => "Patrick"]);
+    return $view->render($response, "results.php", ["title" => "Discordle", "comparison" => $comparison]);
 });
 
 $app->run();
