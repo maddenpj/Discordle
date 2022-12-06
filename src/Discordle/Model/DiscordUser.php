@@ -28,4 +28,17 @@ class DiscordUser {
         return $this->rank->compareTo($other->rank);
     }
 
+    public static function fromArray(array $row): DiscordUser {
+        return new DiscordUser(
+            $row['id'],
+            $row['username'],
+            LoLRank::from($row['rank']),
+            $row['subbed_months'],
+            Region::from($row['region']),
+            $row['age'],
+            Gender::from($row['gender']),
+            NameColor::from($row['name_color'])
+        );
+    }
+
 }

@@ -1,0 +1,18 @@
+CREATE TABLE "public"."discord_users" (
+    "id" integer GENERATED ALWAYS AS IDENTITY,
+    "username" text NOT NULL,
+    "rank" text NOT NULL,
+    "subbed_months" bigint NOT NULL,
+    "region" text NOT NULL,
+    "age" bigint NOT NULL,
+    "gender" text NOT NULL,
+    "name_color" text NOT NULL,
+    "metadata" json, 
+    PRIMARY KEY ("id")
+);
+
+
+INSERT INTO "public"."discord_users"("username", "rank", "subbed_months", "region", "age", "gender", "name_color") VALUES('Frezzyisfuzzy', 'PLATINUM', 81, 'NA', 31, 'MALE', 'RANDOM') RETURNING "id", "username", "rank", "subbed_months", "region", "age", "gender", "name_color", "metadata";
+INSERT INTO "public"."discord_users"("username", "rank", "subbed_months", "region", "age", "gender", "name_color") VALUES('Scarledt', 'MASTER', 76, 'EU', 27, 'FEMALE', 'YELLOW') RETURNING "id", "username", "rank", "subbed_months", "region", "age", "gender", "name_color", "metadata";
+INSERT INTO "public"."discord_users"("username", "rank", "subbed_months", "region", "age", "gender", "name_color") VALUES('PsychoticOwl', 'PLATINUM', 102, 'NA', 25, 'MALE', 'GRAY') RETURNING "id", "username", "rank", "subbed_months", "region", "age", "gender", "name_color", "metadata";
+INSERT INTO "public"."discord_users"("username", "rank", "subbed_months", "region", "age", "gender", "name_color") VALUES('Baycon', 'DIAMOND', 96, 'NA', 23, 'MALE', 'BLUE') RETURNING "id", "username", "rank", "subbed_months", "region", "age", "gender", "name_color", "metadata";

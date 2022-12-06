@@ -3,7 +3,7 @@
 namespace Discordle\Model;
 
 
-enum Region {
-    case NA;
-    case EU;
+enum Region: string {
+    case NA = 'NA';
+    case EU = 'EU';
 }

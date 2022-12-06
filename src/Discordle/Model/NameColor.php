@@ -2,10 +2,10 @@
 
 namespace Discordle\Model;
 
-enum NameColor {
-    case RANDOM;
-    case YELLOW;
-    case BLUE;
-    case GRAY;
+enum NameColor: string {
+    case RANDOM = 'RANDOM';
+    case YELLOW = 'YELLOW';
+    case BLUE = 'BLUE';
+    case GRAY = 'GRAY';
 }
 

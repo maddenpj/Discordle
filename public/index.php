@@ -9,6 +9,7 @@ use Discordle\Model\LoLRank;
 use Discordle\Model\Region;
 use Discordle\Model\Gender;
 use Discordle\Model\NameColor;
+use Discordle\Service\PDODiscordUserService;
 use Discordle\Service\DiscordUserService;
 
 
@@ -51,5 +52,33 @@ $app->get("/view", function (Request $request, Response $response, $args) {
     $view->setLayout('layout.php');
     return $view->render($response, "results.php", ["title" => "Discordle", "comparison" => $comparison]);
 });
+
+$app->get("/enum", function (Request $request, Response $response, $args) {
+    $users = new DiscordUserService();
+    $correctUser = $users->users[1];
+
+    $region1 = Region::NA;
+
+    return $response;
+});
+
+
+$app->get("/data", function (Request $request, Response $response, $args) {
+    $service = new PDODiscordUserService();
+    echo "<pre>";
+    // foreach($service->pdo->query('SELECT * from discord_users') as $row) {
+    //     print_r($row);
+    // }
+
+    $users = $service->pdo->query('SELECT * from discord_users')->fetchAll();
+    
+    $du = DiscordUser::fromArray($users[0]);
+
+    print_r($du);
+    echo "</pre>";
+    return $response;
+});
+
+
 
 $app->run();

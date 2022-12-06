@@ -2,8 +2,8 @@
 
 namespace Discordle\Model;
 
-enum Gender {
-    case MALE;
-    case FEMALE;
-    case NONBINARY;
+enum Gender: string {
+    case MALE = 'MALE';
+    case FEMALE = 'FEMALE';
+    case NONBINARY = 'NONBINARY';
 }
