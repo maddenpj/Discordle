@@ -9,6 +9,7 @@ use Discordle\Model\LoLRank;
 use Discordle\Model\Region;
 use Discordle\Model\Gender;
 use Discordle\Model\NameColor;
+use Discordle\Service\GameService;
 use Discordle\Service\PDODiscordUserService;
 use Discordle\Service\DiscordUserService;
 
@@ -64,15 +65,20 @@ $app->get("/enum", function (Request $request, Response $response, $args) {
 
 
 $app->get("/data", function (Request $request, Response $response, $args) {
-    $service = new PDODiscordUserService();
+    $connect = "pgsql:host=localhost;port=5455;dbname=patrick;user=patrick;password=mysecretpassword";
+    $pdo = new \PDO($connect, null, null, array(
+        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
+    ));
+    $users = new PDODiscordUserService($pdo);
+    $games = new GameService($pdo, $users);
+
+
     echo "<pre>";
     // foreach($service->pdo->query('SELECT * from discord_users') as $row) {
     //     print_r($row);
     // }
 
-    $users = $service->pdo->query('SELECT * from discord_users')->fetchAll();
-    
-    $du = DiscordUser::fromArray($users[0]);
+    $du = $games->fetchById(1);
 
     print_r($du);
     echo "</pre>";
