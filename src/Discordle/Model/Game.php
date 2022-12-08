@@ -17,4 +17,13 @@ class Game {
         $this->enabled = $enabled;
     }
 
+    public function guess(DiscordUser $guess) {
+        $comparison = new Comparison($this->correctUser, $guess);
+        $this->totalGuesses++;
+        if ($comparison->isCorrect()) {
+            $this->correctGuesses++;
+        }
+        return $comparison;
+    }
+
 }

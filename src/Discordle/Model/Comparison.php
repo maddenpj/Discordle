@@ -28,4 +28,8 @@ class Comparison {
 
     }
 
+    public function isCorrect(): bool {
+        return $this->correctUser->id == $this->guessUser->id;
+    }
+
 }

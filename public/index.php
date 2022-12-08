@@ -64,6 +64,15 @@ $app->get("/enum", function (Request $request, Response $response, $args) {
 });
 
 
+/**
+ * Steps
+ *  1. Fetch current game
+ *  2. accept current guess ?
+ *  3. generate comparison object
+ *  4. update game state (in db too)
+ *  5. render compairson object
+ */
+
 $app->get("/data", function (Request $request, Response $response, $args) {
     $connect = "pgsql:host=localhost;port=5455;dbname=patrick;user=patrick;password=mysecretpassword";
     $pdo = new \PDO($connect, null, null, array(
@@ -78,11 +87,17 @@ $app->get("/data", function (Request $request, Response $response, $args) {
     //     print_r($row);
     // }
 
-    $du = $games->fetchById(1);
-
-    print_r($du);
+    $game = $games->fetchById(1);
+    $comparison = $game->guess($users->fetch(2));
+    print_r($comparison);
+    echo '<br/><br/>Game';
+    
+    print_r($game);
     echo "</pre>";
-    return $response;
+    
+    $view = new PhpRenderer('templates');
+    $view->setLayout('layout.php');
+    return $view->render($response, "results.php", ["title" => "Discordle", "comparison" => $comparison]);
 });
 
 
