@@ -26,4 +26,24 @@ class PDODiscordUserService {
         return DiscordUser::fromArray($query->fetchAll()[0]);
     }
 
+    public function insert(DiscordUser $user) {
+        $sql = <<<SQL
+        INSERT INTO discord_users (username, rank, subbed_months, region, age, gender, name_color)
+        VALUES (:username, :rank, :subbedMonths, :region, :age, :gender, :nameColor)
+        RETURNING id
+SQL;
+        $st = $this->pdo->prepare($sql);
+        $st->bindValue(':username', $user->username);
+        $st->bindValue(':rank', $user->rank->value);
+        $st->bindValue(':subbedMonths', $user->subbedMonths);
+        $st->bindValue(':region', $user->region->value);
+        $st->bindValue(':age', $user->age);
+        $st->bindValue(':gender', $user->gender->value);
+        $st->bindValue(':nameColor', $user->color->value);
+
+        if ($st->execute()) {
+            return $this->pdo->lastInsertId();
+        }
+    }
+
 }

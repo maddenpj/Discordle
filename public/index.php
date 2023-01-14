@@ -100,6 +100,35 @@ $app->get("/data", function (Request $request, Response $response, $args) {
     return $view->render($response, "results.php", ["title" => "Discordle", "comparison" => $comparison]);
 });
 
+$app->group('/user', function ($group) {
+    $group->get("/create", function (Request $request, Response $response, $args) {
+        $view = new PhpRenderer('templates');
+        $view->setLayout('layout.php');
+        return $view->render($response, "create.php", ["title" => "Discordle"]);
+    });
+
+    $group->post("/submit", function (Request $request, Response $response, $args) {
+        // Fuck me, need a container
+        $connect = "pgsql:host=localhost;port=5455;dbname=patrick;user=patrick;password=mysecretpassword";
+        $pdo = new \PDO($connect, null, null, array(
+            \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
+        ));
+        $users = new PDODiscordUserService($pdo);
+
+        $data = $request->getParsedBody();
+        $data['id'] = -1; // TODO: Very annoying and bad
+        $user = DiscordUser::fromArray($data);
+        echo '<pre>';
+        print_r($user);
+        $id = $users->insert($user);
+        echo 'inserted ID: ';
+        print_r($id); 
+        echo '</pre>';
+        return $response;
+    });
+});
+
+
 
 
 $app->run();
