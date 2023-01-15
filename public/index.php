@@ -3,6 +3,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 use Slim\Views\PhpRenderer;
+use DI\Container;
 use Discordle\Model\DiscordUser;
 use Discordle\Model\Comparison;
 use Discordle\Model\LoLRank;
@@ -16,6 +17,30 @@ use Discordle\Service\DiscordUserService;
 
 require __DIR__ . '/../vendor/autoload.php';
 
+$container = new Container([
+    'config' => [
+        'sql.connection' => 'pgsql:host=localhost;port=5455;dbname=patrick;user=patrick;password=mysecretpassword'
+    ],
+    \PDO::class => function (Container $c) {
+        return new \PDO($c->get('config')['sql.connection'], null, null, array(
+            \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
+        ));
+    },
+    'users' => function (Container $c) {
+        return new PDODiscordUserService($c->get(\PDO::class));
+    },
+    'games' => function (Container $c) {
+        return new GameService($c->get(\PDO::class), $c->get('users'));
+    },
+    'view' => function (Container $c) {
+        $view = new PhpRenderer('templates');
+        $view->setLayout('layout.php');
+        return $view;
+    }
+]);
+
+
+AppFactory::setContainer($container);
 $app = AppFactory::create();
 
 $app->get('/', function (Request $request, Response $response, $args) {
@@ -49,9 +74,7 @@ $app->get("/view", function (Request $request, Response $response, $args) {
     $comparison = new Comparison($correctUser, $guessUser);
 
 
-    $view = new PhpRenderer('templates');
-    $view->setLayout('layout.php');
-    return $view->render($response, "results.php", ["title" => "Discordle", "comparison" => $comparison]);
+    return $this->get('view')->render($response, "results.php", ["title" => "Discordle", "comparison" => $comparison]);
 });
 
 $app->get("/enum", function (Request $request, Response $response, $args) {
@@ -74,50 +97,34 @@ $app->get("/enum", function (Request $request, Response $response, $args) {
  */
 
 $app->get("/data", function (Request $request, Response $response, $args) {
-    $connect = "pgsql:host=localhost;port=5455;dbname=patrick;user=patrick;password=mysecretpassword";
-    $pdo = new \PDO($connect, null, null, array(
-        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
-    ));
-    $users = new PDODiscordUserService($pdo);
-    $games = new GameService($pdo, $users);
-
+    $users = $this->get('users');
+    $games = $this->get('games');
 
     echo "<pre>";
-    // foreach($service->pdo->query('SELECT * from discord_users') as $row) {
-    //     print_r($row);
-    // }
-
+    
     $qs = $request->getQueryParams();
     $gameNumber = (isset($qs['g'])) ? (int)$qs['g'] : 2;
-
+    
     $game = $games->fetchById(1);
-    $comparison = $game->guess($users->fetch($gameNumber));
     // TODO ->guess should update the counts?
-    print_r($comparison);
-    echo '<br/><br/>Game';
+    $comparison = $game->guess($users->fetch($gameNumber));
     
-    print_r($game);
+    // print_r($comparison);
+    // echo '<br/><br/>Game';
+    
+    // print_r($game);
     echo "</pre>";
-    
-    $view = new PhpRenderer('templates');
-    $view->setLayout('layout.php');
-    return $view->render($response, "results.php", ["title" => "Discordle", "comparison" => $comparison]);
+
+    return $this->get('view')->render($response, "results.php", ["title" => "Discordle", "comparison" => $comparison]);
 });
 
 $app->group('/user', function ($group) {
     $group->get("/create", function (Request $request, Response $response, $args) {
-        $view = new PhpRenderer('templates');
-        $view->setLayout('layout.php');
-        return $view->render($response, "create.php", ["title" => "Discordle"]);
+        return $this->get('view')->render($response, "create.php", ["title" => "Discordle"]);
     });
 
     $group->post("/submit", function (Request $request, Response $response, $args) {
-        // Fuck me, need a container
-        $connect = "pgsql:host=localhost;port=5455;dbname=patrick;user=patrick;password=mysecretpassword";
-        $pdo = new \PDO($connect, null, null, array(
-            \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
-        ));
-        $users = new PDODiscordUserService($pdo);
+        $users = $this->get('users');
 
         $data = $request->getParsedBody();
         $data['id'] = -1; // TODO: Very annoying and bad
