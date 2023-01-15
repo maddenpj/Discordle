@@ -87,8 +87,12 @@ $app->get("/data", function (Request $request, Response $response, $args) {
     //     print_r($row);
     // }
 
+    $qs = $request->getQueryParams();
+    $gameNumber = (isset($qs['g'])) ? (int)$qs['g'] : 2;
+
     $game = $games->fetchById(1);
-    $comparison = $game->guess($users->fetch(2));
+    $comparison = $game->guess($users->fetch($gameNumber));
+    // TODO ->guess should update the counts?
     print_r($comparison);
     echo '<br/><br/>Game';
     
